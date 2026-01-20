@@ -39,7 +39,7 @@ public class Index {
                     debut = m + 1;
                 }
             }
-            return -(debut+1);
+            return -(debut + 1);
         }
 
 
@@ -48,10 +48,11 @@ public class Index {
             // remarque : utilise rechercherSortie de EntreeIndex }
             int place = rechercherSortie(sortie);
             if (place < 0) {
-                int indexInsertion = -(place + 1);
-                sorties.add(indexInsertion, sortie);
+                sorties.add(-(place + 1), sortie);
             }
         }
+
+
         @Override
         public String toString() {
             return entree + "=>" + sorties;
