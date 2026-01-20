@@ -29,10 +29,6 @@ public class Chatbot {
 //        reponses = Utilitaire.lireReponses("reponses.txt");
         reponses = Utilitaire.lireReponses("mini_reponses.txt");
         indexThemes = Utilitaire.constructionIndexReponses(reponses,motsOutils);
-
-
-
-
         // initialisation du thésaurus (partie 2)
         //thesaurus = ...
 

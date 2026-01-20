@@ -48,13 +48,10 @@ public class Index {
             // remarque : utilise rechercherSortie de EntreeIndex }
             int place = rechercherSortie(sortie);
             if (place < 0) {
-                sorties.add(-place, sortie);
-            } else {
-                System.out.println(sortie + " Est deja present");
+                int indexInsertion = -(place + 1);
+                sorties.add(indexInsertion, sortie);
             }
         }
-
-
         @Override
         public String toString() {
             return entree + "=>" + sorties;
