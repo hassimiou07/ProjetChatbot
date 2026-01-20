@@ -39,7 +39,7 @@ public class Index {
                     debut = m + 1;
                 }
             }
-            return -debut;
+            return -(debut+1);
         }
 
 

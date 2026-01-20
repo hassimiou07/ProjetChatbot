@@ -1,3 +1,5 @@
+import jdk.jshell.execution.Util;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -29,6 +31,10 @@ public class Chatbot {
 //        reponses = Utilitaire.lireReponses("reponses.txt");
         reponses = Utilitaire.lireReponses("mini_reponses.txt");
         indexThemes = Utilitaire.constructionIndexReponses(reponses,motsOutils);
+
+
+        formesReponses = Utilitaire.constructionTableFormes(reponses, motsOutils);
+
         // initialisation du thésaurus (partie 2)
         //thesaurus = ...
 
