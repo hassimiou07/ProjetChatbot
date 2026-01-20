@@ -132,21 +132,22 @@ public class Utilitaire {
     static private boolean existeChaineDicho(ArrayList<String> lesChaines, String chaine) {
         //{lesChaines (triée dans l'ordre lexicographique)}=>  {recherche dichotomique de chaine dans lesChaines
         // résultat =  true si trouvé et false sinon }
-        int min = 0;
-        int max = lesChaines.size()-1;
-        while (min<=max){
-            int m = (min+max)/2;
-            String millieu = lesChaines.get(m);
-            if (millieu.compareTo(chaine)==0){
-                return true;
+        if (lesChaines.isEmpty()) {
+            return false;
+        } else if (lesChaines.getLast().compareTo(chaine) < 0) {
+            return false;
+        } else {
+            int inf = 0, sup = lesChaines.size() - 1;
+            while (inf < sup) {
+                int m = (inf + sup) / 2;
+                if (lesChaines.get(m).compareTo(chaine) >= 0) {
+                    sup = m;
+                } else {
+                    inf = m + 1;
+                }
             }
-            else if(chaine.compareTo(millieu)<0){
-                max = m-1;
-            }else{
-                min = m+1;
-            }
+            return lesChaines.get(sup).equals(chaine);
         }
-        return false;
     }
 
     static public boolean entierementInclus(ArrayList<String> mots, String question) {
@@ -192,8 +193,21 @@ public class Utilitaire {
         // et les sorties sont les indices (dans reponses) des réponses les contenant.
         // remarque : utilise existeChaineDicho, decoupeEnMots et ajouterSortieAEntree }
         Index index = new Index();
+        int i = 0;
+        while (i < reponses.size()) {
+            ArrayList<String> phrasedecoupe = decoupeEnMots(reponses.get(i));
+            int j = 0;
+            while (j < phrasedecoupe.size()) {
+                if (!existeChaineDicho(motsOutils, phrasedecoupe.get(j))) {
+                    index.ajouterSortieAEntree(phrasedecoupe.get(j), i);
+                }
+                j++;
+            }
+            i++;
+        }
         return index;
     }
+
 
 
     static void trierChaines(ArrayList<String> v) {
@@ -256,17 +270,27 @@ public class Utilitaire {
         // Par exemple, si V est [3,4,5,5,5,6,6,8,8,8,12,16,16,20]
         // si seuil<=3 alors le résultat est [5,8].
         // si le seuil>3 alors le résultat est []}
-        ArrayList<Integer> result = new ArrayList<>();
-        int count = 0;
-        for (int i = 0; i<v.size(); i++){
-            if (v.get(i).equals(v.get(i+1))){
-                count++;
-            }if (count == seuil){
-                result.add(v.get(i));
-                count =0;
+        int i = 0,max = 0;
+        ArrayList<Integer> vecteurentier = new ArrayList<>();
+        while( i < v.size()){
+            int valeurActuelle = v.get(i);
+            int compt = 0;
+            while(i < v.size() && v.get(i) == valeurActuelle){
+                compt++;
+                i++;
+            }
+            if (compt > max) {
+                max = compt;
+                vecteurentier.clear();
+                vecteurentier.add(valeurActuelle);
+            } else if (compt == max && compt > 0) {
+                vecteurentier.add(valeurActuelle);
             }
         }
-        return new ArrayList<Integer>();
+        if (max < seuil) {
+            return new ArrayList<>();
+        }
+        return vecteurentier;
     }
 
     static ArrayList<Integer> fusion(ArrayList<Integer> v1, ArrayList<Integer> v2) {
@@ -372,7 +396,21 @@ public class Utilitaire {
         // remarque 3 : on aurait pu calculer directement une intersection au lieu d'une fusion et se passer de maxOccurences mais on
         // souhaite pouvoir garder la possibilité d'assouplir par la suite la contrainte sur la présence de l'intégralité
         // des mots de la question dans la réponse }
-        return new ArrayList<Integer>();
+        ArrayList<String> questiondecoupe = decoupeEnMots(question);
+        ArrayList<Integer> vecteurdereponses = new ArrayList<>();
+        int i = 0,compt = 0;
+        while(i < questiondecoupe.size()){
+            String motActuel = questiondecoupe.get(i);
+            if (!existeChaineDicho(motsOutils, motActuel)){
+                compt++;
+                ArrayList<Integer> sorties = IndexReponses.rechercherSorties(motActuel);
+                if (sorties != null) {
+                    vecteurdereponses = fusion(vecteurdereponses, sorties);
+                }
+            }
+            i++;
+        }
+        return maxOccurences(vecteurdereponses,compt);
     }
 
 

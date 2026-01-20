@@ -99,11 +99,14 @@ public class Index {
         // remarque : utilise la fonction rechercherEntree de Index et la procedure ajouterSortie de EntreeIndex}
         int place = rechercherEntree(entree);
         EntreeIndex entreeIndex;
+
         if (place >= 0) {
             entreeIndex = table.get(place);
         } else {
+            int indexInsertion = -(place + 1);
+
             entreeIndex = new EntreeIndex(entree);
-            table.add(-place, entreeIndex);
+            table.add(indexInsertion, entreeIndex);
         }
         entreeIndex.ajouterSortie(sortie);
     }

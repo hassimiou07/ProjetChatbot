@@ -23,11 +23,15 @@ public class Chatbot {
         // initialisation du vecteur des mots outils
         motsOutils = Utilitaire.lireMotsOutils("mots-outils.txt");
         // tri du vecteur des mots outils
-        //...
+        Utilitaire.trierChaines(motsOutils);
 
         // initialisation du vecteur des réponses
-        reponses = Utilitaire.lireReponses("reponses.txt");
-        //reponses = Utilitaire.lireReponses("mini_reponses.txt");
+//        reponses = Utilitaire.lireReponses("reponses.txt");
+        reponses = Utilitaire.lireReponses("mini_reponses.txt");
+        indexThemes = Utilitaire.constructionIndexReponses(reponses,motsOutils);
+
+
+
 
         // initialisation du thésaurus (partie 2)
         //thesaurus = ...
@@ -71,10 +75,18 @@ public class Chatbot {
 
 
     static private String repondre(String question) {
-        //ArrayList<Integer> reponsesCandidates;
+        ArrayList<Integer> reponsesCandidates = Utilitaire.constructionReponsesCandidates(question,indexThemes,motsOutils);
         //ArrayList<Integer> reponsesSelectionnees;
-        int choix = (int) (Math.random() * reponses.size());
-        return (reponses.get(choix));
+        if (reponsesCandidates.isEmpty()){
+            return MESSAGE_IGNORANCE;
+        }
+        int i = 0;
+        String resultat = "";
+        while(i < reponsesCandidates.size()){
+            resultat += reponses.get(reponsesCandidates.get(i)) + "\n";
+            i++;
+        }
+        return resultat;
     }
 
     // partie 2
