@@ -29,8 +29,7 @@ public class Chatbot {
 //        reponses = Utilitaire.lireReponses("reponses.txt");
         reponses = Utilitaire.lireReponses("mini_reponses.txt");
         indexThemes = Utilitaire.constructionIndexReponses(reponses,motsOutils);
-
-
+        indexThemes.afficher();
 
 
         // initialisation du thésaurus (partie 2)
@@ -76,7 +75,7 @@ public class Chatbot {
 
     static private String repondre(String question) {
         ArrayList<Integer> reponsesCandidates = Utilitaire.constructionReponsesCandidates(question,indexThemes,motsOutils);
-        //ArrayList<Integer> reponsesSelectionnees;
+//        ArrayList<Integer> reponsesSelectionnees = Utilitaire.selectionReponsesCandidates(question);
         if (reponsesCandidates.isEmpty()){
             return MESSAGE_IGNORANCE;
         }

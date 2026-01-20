@@ -39,7 +39,7 @@ public class Index {
                     debut = m + 1;
                 }
             }
-            return -debut;
+            return -(debut + 1);
         }
 
 
@@ -48,9 +48,7 @@ public class Index {
             // remarque : utilise rechercherSortie de EntreeIndex }
             int place = rechercherSortie(sortie);
             if (place < 0) {
-                sorties.add(-place, sortie);
-            } else {
-                System.out.println(sortie + " Est deja present");
+                sorties.add(-(place + 1), sortie);
             }
         }
 
