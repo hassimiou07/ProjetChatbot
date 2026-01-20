@@ -75,20 +75,21 @@ public class Index {
         //résultat =  l'indice de entree dans table si trouvé et -l'indice d'insertion sinon }
         int debut = 0;
         int fin = table.size() - 1;
+
         while (debut <= fin) {
             int m = (debut + fin) / 2;
             EntreeIndex milieu = table.get(m);
             int cmp = milieu.entree.compareTo(entree);
+
             if (cmp == 0) {
-                return m;
+                return m; // Trouvé ! (index positif ou nul)
             } else if (cmp > 0) {
                 fin = m - 1;
             } else {
                 debut = m + 1;
             }
         }
-
-        return -debut;
+        return -(debut + 1);
     }
 
 
