@@ -1236,3 +1236,4 @@ Quelle est la monnaie au Canada ? La monnaie officielle du Canada est le dollar 
 Quelle monnaie utilise-t-on au Canada ? La monnaie utilisée au Canada est la dollar canadien.
 Qui est l'inventeur du téléphone ? Le téléphone a été inventé par Alexander Graham Bell.
 Quel est l'inventeur du vaccin ? Edward Jenner a inventé le premier vaccin.
+Qui est le chat bot ? Le chat bot est une IA, developpé en cours de R1.01 par Teo & Mamadou.

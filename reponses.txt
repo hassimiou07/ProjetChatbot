@@ -1257,3 +1257,5 @@ La Lombardie est située dans la partie Nord de l'Italie (région frontalière a
 Alexander Graham Bell a inventé le téléphone.
 La monnaie utilisée au Canada est la dollar canadien.
 Le stéthoscope a été inventé par René Laennec.
+Le chat bot est une IA, developpé en cours de R1.01 par Teo & Mamadou
+En france

@@ -26,72 +26,106 @@ public class Chatbot {
         Utilitaire.trierChaines(motsOutils);
 
         // initialisation du vecteur des réponses
-//        reponses = Utilitaire.lireReponses("reponses.txt");
-        reponses = Utilitaire.lireReponses("mini_reponses.txt");
-        indexThemes = Utilitaire.constructionIndexReponses(reponses,motsOutils);
-
-
+        reponses = Utilitaire.lireReponses("reponses.txt");
+//        reponses = Utilitaire.lireReponses("mini_reponses.txt");
+//        indexThemes.afficher();
 
 
         // initialisation du thésaurus (partie 2)
-        //thesaurus = ...
+        thesaurus = new Thesaurus("thesaurus.txt");
 
         // construction de l'index pour retrouver rapidement les réponses sur leurs thématiques
-        //indexThemes = ...
+        indexThemes = Utilitaire.constructionIndexReponses(reponses, motsOutils, thesaurus);
         //indexThemes.afficher();
 
         // construction de la table des formes de réponses
-        //formesReponses = ...
+        formesReponses = Utilitaire.constructionTableFormes(reponses, motsOutils, thesaurus);
         //System.out.println(formesReponses);
 
         // initialisation du vecteur des questions/réponses idéales
         ArrayList<String> questionsReponses = Utilitaire.lireQuestionsReponses("questions-reponses.txt");
-        //ArrayList<String> questionsReponses = Utilitaire.lireQuestionsReponses("mini_questions-reponses.txt");
+//        ArrayList<String> questionsReponses = Utilitaire.lireQuestionsReponses("mini_questions-reponses.txt");
 
         // construction de l'index pour retrouver rapidement les formes possibles de réponses à partir des mots outils de la question
-        //indexFormes = ...
-        //indexFormes.afficher();
+        indexFormes = Utilitaire.constructionIndexFormes(questionsReponses, formesReponses, motsOutils, thesaurus);
+
+//        indexFormes.afficher();
 
         String reponse = "";
-        String entreeUtilisateur = ""; // la dernière entrée de l'utilisateur
-
+        String entreeUtilisateur = "";
+        String derniereQuestionThematique = ""; // Variable pour enregistrer le contexte
 
         Scanner lecteur = new Scanner(System.in);
         System.out.println();
         System.out.print("> ");
         System.out.println(MESSAGE_BIENVENUE);
 
-        do { // on attend des questions
+        do {
             System.out.print("> ");
             entreeUtilisateur = lecteur.nextLine();
-            if (entreeUtilisateur.compareTo(MESSAGE_QUITTER) != 0) { //tant que l'utilisateur ne veut pas arrêter
-                reponse = repondre(entreeUtilisateur);
-                System.out.println("> " + reponse);
+            if (entreeUtilisateur.compareToIgnoreCase(MESSAGE_QUITTER) != 0) {
+                String reponseChat = "";
+                if (Utilitaire.entierementInclus(motsOutils, entreeUtilisateur)) {
+                    if (!derniereQuestionThematique.equals("")) {
+                        reponseChat = repondreEnContexte(entreeUtilisateur, derniereQuestionThematique);
+                    } else {
+                        reponseChat = MESSAGE_IGNORANCE;
+                    }
+                }
+                else {
+                    reponseChat = repondre(entreeUtilisateur);
+                    derniereQuestionThematique = entreeUtilisateur;
+                }
+                if (reponseChat.equals(MESSAGE_IGNORANCE)) {
+                    System.out.println("> " + MESSAGE_IGNORANCE);
+                    System.out.println("> " + MESSAGE_APPRENTISSAGE);
+                    System.out.print("> ");
+                    String nouvelleReponse = lecteur.nextLine();
+                    Utilitaire.ecrireFichier("questions-reponses.txt", entreeUtilisateur + "?" + nouvelleReponse);
+                    if (!Utilitaire.reponseExiste(nouvelleReponse, indexThemes, reponses, motsOutils, thesaurus)) {
+                        Utilitaire.ecrireFichier("reponses.txt", nouvelleReponse);
+                        // 2. Mise à jour des index en mémoire (Thèmes)
+                        Utilitaire.IntegrerNouvelleReponse(nouvelleReponse, reponses, indexThemes, motsOutils, thesaurus);
+                    }
+                    Utilitaire.integrerNouvelleQuestionReponse(entreeUtilisateur, nouvelleReponse, formesReponses, indexFormes, motsOutils, thesaurus);
+                    System.out.println("> " + MESSAGE_CONFIRMATION);
+                } else {
+                    System.out.println("> " + reponseChat);
+                }
             }
         } while (entreeUtilisateur.compareToIgnoreCase(MESSAGE_QUITTER) != 0);
-
-
     }
 
 
     static private String repondre(String question) {
-        ArrayList<Integer> reponsesCandidates = Utilitaire.constructionReponsesCandidates(question,indexThemes,motsOutils);
-        //ArrayList<Integer> reponsesSelectionnees;
+        ArrayList<Integer> reponsesCandidates = Utilitaire.constructionReponsesCandidates(question, indexThemes, motsOutils,thesaurus);
+
         if (reponsesCandidates.isEmpty()){
             return MESSAGE_IGNORANCE;
         }
-        int i = 0;
-        String resultat = "";
-        while(i < reponsesCandidates.size()){
-            resultat += reponses.get(reponsesCandidates.get(i)) + "\n";
-            i++;
+        ArrayList<Integer> reponsesSelectionnees = Utilitaire.selectionReponsesCandidates(question, reponsesCandidates, indexFormes, reponses, formesReponses, motsOutils,thesaurus);
+        if (reponsesSelectionnees.isEmpty()) {
+            return MESSAGE_IGNORANCE;
         }
-        return resultat;
+        int indiceAleatoire = (int) (Math.random() * reponsesSelectionnees.size());
+        int idChoisi = reponsesSelectionnees.get(indiceAleatoire);
+        return reponses.get(idChoisi);
     }
 
     // partie 2
     static private String repondreEnContexte(String question, String questionPrecedente) {
-        return "";
+        ArrayList<Integer> reponsesCandidates = Utilitaire.constructionReponsesCandidates(questionPrecedente, indexThemes, motsOutils, thesaurus);
+        if (reponsesCandidates.isEmpty()) {
+            return MESSAGE_IGNORANCE;
+        }
+        ArrayList<Integer> reponsesSelectionnees = Utilitaire.selectionReponsesCandidates(question, reponsesCandidates, indexFormes, reponses, formesReponses, motsOutils, thesaurus);
+        if (reponsesSelectionnees.isEmpty()) {
+            return MESSAGE_IGNORANCE;
+        }
+        // Sélection aléatoire parmi les résultats
+        int indiceAleatoire = (int) (Math.random() * reponsesSelectionnees.size());
+        int idChoisi = reponsesSelectionnees.get(indiceAleatoire);
+        return reponses.get(idChoisi);
     }
 
 

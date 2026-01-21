@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
 public class Index {
-
     // un index est un vecteur d'EntreeIndex
     private class EntreeIndex {
 
@@ -122,6 +121,8 @@ public class Index {
         }
         return new ArrayList<Integer>();
     }
+
+
     public void afficher() {
         // {}=>{affiche la table de l'index}
         for (int i = 0; i < table.size(); i++) {
